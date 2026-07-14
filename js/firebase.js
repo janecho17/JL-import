@@ -41,12 +41,12 @@ import {
 // ⚠️ Reemplaza estos valores con los de tu proyecto Firebase
 // (Firebase Console → Configuración del proyecto → Tus apps → SDK config)
 const firebaseConfig = {
-  apiKey: "TU_API_KEY",
-  authDomain: "tu-proyecto.firebaseapp.com",
-  projectId: "tu-proyecto",
-  storageBucket: "tu-proyecto.appspot.com",
-  messagingSenderId: "TU_SENDER_ID",
-  appId: "TU_APP_ID",
+  apiKey: "AIzaSyD2apriEp8aGmebxiaX7YNdibZWTaJzjak",
+  authDomain: "jl-import-4828d.firebaseapp.com",
+  projectId: "jl-import-4828d",
+  storageBucket: "jl-import-4828d.firebasestorage.app",
+  messagingSenderId: "530414750369",
+  appId: "1:530414750369:web:3fd3712baabdb9fe9dbee0",
 };
 
 const app = initializeApp(firebaseConfig);
