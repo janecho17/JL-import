@@ -5,7 +5,6 @@
 import { protegerRutaAdmin } from "./adminGuard.js";
 import {
   db,
-  storage,
   collection,
   getDocs,
   addDoc,
@@ -14,9 +13,6 @@ import {
   updateDoc,
   deleteDoc,
   serverTimestamp,
-  ref,
-  uploadBytes,
-  getDownloadURL,
 } from "./firebase.js";
 import { formatearPrecio, toast } from "./usuario.js";
 
@@ -146,7 +142,7 @@ function renderVariantesEditor() {
         <input type="text" placeholder="Talla (opcional)" value="${v.atributos.Talla || ""}" data-attr="Talla">
         <input type="text" placeholder="Memoria (opcional)" value="${v.atributos.Memoria || ""}" data-attr="Memoria">
         <input type="number" placeholder="Stock" min="0" value="${v.stock}" data-attr-stock>
-        <input type="file" accept="image/*" multiple data-attr-imagenes>
+        <input type="url" placeholder="Enlace(s) de imagen, separados por coma" data-attr-imagenes>
       </div>
       <div class="variante-editor__miniaturas">
         ${(v.imagenes || []).map((img) => `<img src="${img}">`).join("")}
@@ -168,15 +164,11 @@ function renderVariantesEditor() {
     el.querySelector("[data-attr-stock]").addEventListener("input", (e) => {
       variantesTemp[idx].stock = parseInt(e.target.value || "0", 10);
     });
-    el.querySelector("[data-attr-imagenes]").addEventListener("change", async (e) => {
-      const archivos = [...e.target.files];
-      toast("Subiendo imágenes...", "info");
-      const urls = [];
-      for (const archivo of archivos) {
-        const storageRef = ref(storage, `productos/${Date.now()}_${archivo.name}`);
-        await uploadBytes(storageRef, archivo);
-        urls.push(await getDownloadURL(storageRef));
-      }
+    el.querySelector("[data-attr-imagenes]").addEventListener("change", (e) => {
+      const urls = e.target.value
+        .split(",")
+        .map((u) => u.trim())
+        .filter(Boolean);
       variantesTemp[idx].imagenes.push(...urls);
       renderVariantesEditor();
     });
@@ -194,13 +186,7 @@ formProducto?.addEventListener("submit", async (e) => {
   btn.disabled = true;
 
   try {
-    let imagenPrincipal = form.dataset.imagenPrincipal || "";
-    const archivoPrincipal = form.imagenPrincipal.files[0];
-    if (archivoPrincipal) {
-      const storageRef = ref(storage, `productos/principal_${Date.now()}_${archivoPrincipal.name}`);
-      await uploadBytes(storageRef, archivoPrincipal);
-      imagenPrincipal = await getDownloadURL(storageRef);
-    }
+    const imagenPrincipal = form.imagenPrincipal.value.trim();
 
     const especificaciones = [...contVariantes.parentElement.querySelectorAll("[data-spec-clave]")]
       .map((el, i) => {
@@ -290,7 +276,7 @@ async function cargarProductos() {
         formProducto.precio.value = p.precio || "";
         formProducto.precioOferta.value = p.precioOferta || "";
         formProducto.destacado.checked = !!p.destacado;
-        formProducto.dataset.imagenPrincipal = p.imagenPrincipal || "";
+        formProducto.imagenPrincipal.value = p.imagenPrincipal || "";
         variantesTemp = p.variantes || [];
         renderVariantesEditor();
         document.querySelector('[data-tab-btn="productos"]')?.click();
@@ -344,3 +330,4 @@ async function cargarEstadisticas() {
     <div class="stat-card stat-card--ancho"><span>Ventas acumuladas</span><strong>${formatearPrecio(ventasTotal)}</strong></div>
   `;
 }
+  
