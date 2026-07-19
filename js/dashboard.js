@@ -127,7 +127,13 @@ const contVariantes = document.querySelector("[data-variantes-editor]");
 const tablaProductos = document.querySelector("[data-tabla-productos]");
 
 document.querySelector("[data-agregar-variante]")?.addEventListener("click", () => {
-  variantesTemp.push({ atributos: { Color: "", Talla: "", Memoria: "" }, stock: 0, imagenes: [] });
+  variantesTemp.push({
+    atributos: { Color: "", Talla: "", Memoria: "" },
+    stock: 0,
+    precio: null,
+    precioOferta: null,
+    imagenes: [],
+  });
   renderVariantesEditor();
 });
 
@@ -142,8 +148,11 @@ function renderVariantesEditor() {
         <input type="text" placeholder="Talla (opcional)" value="${v.atributos.Talla || ""}" data-attr="Talla">
         <input type="text" placeholder="Memoria (opcional)" value="${v.atributos.Memoria || ""}" data-attr="Memoria">
         <input type="number" placeholder="Stock" min="0" value="${v.stock}" data-attr-stock>
+        <input type="number" step="0.01" min="0" placeholder="Precio (S/, opcional)" value="${v.precio ?? ""}" data-attr-precio>
+        <input type="number" step="0.01" min="0" placeholder="Precio oferta (S/, opcional)" value="${v.precioOferta ?? ""}" data-attr-precio-oferta>
         <input type="url" placeholder="Enlace(s) de imagen, separados por coma" data-attr-imagenes>
       </div>
+      <p class="variante-editor__ayuda">Si dejas el precio vacío, esta variante usará el precio general del producto.</p>
       <div class="variante-editor__miniaturas">
         ${(v.imagenes || []).map((img) => `<img src="${img}">`).join("")}
       </div>
@@ -163,6 +172,12 @@ function renderVariantesEditor() {
     });
     el.querySelector("[data-attr-stock]").addEventListener("input", (e) => {
       variantesTemp[idx].stock = parseInt(e.target.value || "0", 10);
+    });
+    el.querySelector("[data-attr-precio]").addEventListener("input", (e) => {
+      variantesTemp[idx].precio = e.target.value ? parseFloat(e.target.value) : null;
+    });
+    el.querySelector("[data-attr-precio-oferta]").addEventListener("input", (e) => {
+      variantesTemp[idx].precioOferta = e.target.value ? parseFloat(e.target.value) : null;
     });
     el.querySelector("[data-attr-imagenes]").addEventListener("change", (e) => {
       const urls = e.target.value
@@ -330,4 +345,5 @@ async function cargarEstadisticas() {
     <div class="stat-card stat-card--ancho"><span>Ventas acumuladas</span><strong>${formatearPrecio(ventasTotal)}</strong></div>
   `;
 }
-  
+
+    
