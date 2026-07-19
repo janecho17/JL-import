@@ -128,7 +128,7 @@ const tablaProductos = document.querySelector("[data-tabla-productos]");
 
 document.querySelector("[data-agregar-variante]")?.addEventListener("click", () => {
   variantesTemp.push({
-    atributos: { Color: "", Talla: "", Memoria: "" },
+    atributos: { Tipo: "", Color: "", Talla: "", Memoria: "" },
     stock: 0,
     precio: null,
     precioOferta: null,
@@ -144,6 +144,7 @@ function renderVariantesEditor() {
       (v, i) => `
     <div class="variante-editor" data-variante-idx="${i}">
       <div class="variante-editor__campos">
+        <input type="text" placeholder="Tipo (ej: Cargador, Cable)" value="${v.atributos.Tipo || ""}" data-attr="Tipo">
         <input type="text" placeholder="Color (opcional)" value="${v.atributos.Color || ""}" data-attr="Color">
         <input type="text" placeholder="Talla (opcional)" value="${v.atributos.Talla || ""}" data-attr="Talla">
         <input type="text" placeholder="Memoria (opcional)" value="${v.atributos.Memoria || ""}" data-attr="Memoria">
@@ -152,7 +153,7 @@ function renderVariantesEditor() {
         <input type="number" step="0.01" min="0" placeholder="Precio oferta (S/, opcional)" value="${v.precioOferta ?? ""}" data-attr-precio-oferta>
         <input type="url" placeholder="Enlace(s) de imagen, separados por coma" data-attr-imagenes>
       </div>
-      <p class="variante-editor__ayuda">Si dejas el precio vacío, esta variante usará el precio general del producto.</p>
+      <p class="variante-editor__ayuda">Deja "Tipo" vacío si el producto no tiene tipos distintos (solo colores/tallas). Si dejas el precio vacío, esta variante usará el precio general del producto.</p>
       <div class="variante-editor__miniaturas">
         ${(v.imagenes || []).map((img) => `<img src="${img}">`).join("")}
       </div>
